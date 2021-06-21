@@ -1,0 +1,2 @@
+MAIN_LOGGER = "dqnroute"
+INFTY = 1000000

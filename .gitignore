@@ -1,0 +1,11 @@
+result
+tf_models
+torch_models
+pythonenv
+__pycache__
+logs*
+.ipynb_checkpoints
+*.h5
+*.egg-info
+**/texout/*
+!**/texout/*.pdf
