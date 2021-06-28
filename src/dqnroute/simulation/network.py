@@ -22,6 +22,7 @@ class NodeEnv:
     def __process_msg(self, msg: Message):
         # Входящие сообщения могут стоять в очереди на обработку,
         # поэтому нужно ждать
+        # Обработка входящих сообщений занимает время, одновременно нельзя
         yield self.msg_event(msg)
 
         # Обработать сообщение и передать ответы дальше
@@ -75,6 +76,12 @@ class NetworkEnv:
     def get_router_cfg(self, node):
         router_cfg = self.run_params['settings']['router'].get(
                 self.router_type, {})
+
+        if self.router_type == 'dqn':
+            router_cfg['net_size'] = self.graph.number_of_nodes()
+
+        if self.router_type == 'dqn-le':
+            router_cfg['net_size'] = self.graph.number_of_nodes()
 
         return router_cfg
 

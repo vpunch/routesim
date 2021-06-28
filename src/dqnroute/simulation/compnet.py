@@ -20,13 +20,13 @@ class RouterEnv(NodeEnv):
                  node: int,
                  deliv_periods: DelivPeriods,
                  local_graph: nx.DiGraph,
-                 pkg_process_delay: int):
+                 pkg_proc_delay: int):
         super().__init__(env, router)
 
         self.id = node
         self.deliv_periods = deliv_periods
         self.local_graph = local_graph
-        self.pkg_process_delay = pkg_process_delay
+        self.pkg_proc_delay = pkg_proc_delay
 
         self.msg_proc_queue = Resource(self.env, capacity=1)
 
@@ -86,7 +86,7 @@ class RouterEnv(NodeEnv):
         elif isinstance(inner_msg, PkgMsg):
             with self.msg_proc_queue.request() as req:
                 yield req  # ждем обработки предыдущего сообщения
-                yield self.env.timeout(self.pkg_process_delay)
+                yield self.env.timeout(self.pkg_proc_delay)
         else:
             raise UnsupportedMessageType(inner_msg)
 
@@ -145,7 +145,9 @@ class ComputerNetEnv(NetworkEnv):
 
         def parse_edge(edge):
             params = edge.copy()
-            params['weight'] = 1 / params['bandwidth']
+            params['weight'] = run_params['settings']['pkg_size'] / \
+                               params['bandwidth'] + \
+                               run_params['settings']['router_env']['pkg_proc_delay']
             u = params.pop('u')
             v = params.pop('v')
             return u, v, params
@@ -166,7 +168,7 @@ class ComputerNetEnv(NetworkEnv):
 
         pkg_distr = self.run_params['settings']['pkg_distr']
         pkg_id = 1
-        for seq in pkg_distr['sequence']:
+        for seq in pkg_distr:
             if 'action' in seq:
                 action = seq['action']
                 pause = seq['pause']
@@ -187,15 +189,15 @@ class ComputerNetEnv(NetworkEnv):
 
                 yield self.env.timeout(pause)
             else:
-                delta = seq['delta']
+                delta = seq['delay']
                 all_nodes = list(self.graph.nodes)
-                sources = seq.get('sources', all_nodes)
-                dests = seq.get('dests', all_nodes)
+                sources = seq.get('srcs', all_nodes)
+                dests = seq.get('dsts', all_nodes)
 
-                for i in range(0, seq['pkg_number']):
+                for i in range(0, seq['num']):
                     src = random.choice(sources)
                     dst = random.choice(dests)
-                    pkg = Package(pkg_id, 1024, dst, self.env.now, None)
+                    pkg = Package(pkg_id, self.run_params['settings']['pkg_size'], dst, self.env.now, None)
 
                     logger.debug(
                             (f'Sending random package #{pkg_id} from {src}'

@@ -1,0 +1,48 @@
+network:
+  - {u: 0, v: 6, bandwidth: 100}
+  - {u: 0, v: 9, bandwidth: 100}
+  - {u: 1, v: 2, bandwidth: 100}
+  - {u: 1, v: 3, bandwidth: 100}
+  - {u: 2, v: 8, bandwidth: 100}
+  - {u: 3, v: 4, bandwidth: 100}
+  - {u: 3, v: 5, bandwidth: 100}
+  - {u: 3, v: 9, bandwidth: 100}
+  - {u: 4, v: 8, bandwidth: 100}
+  - {u: 5, v: 7, bandwidth: 100}
+  - {u: 6, v: 9, bandwidth: 100}
+  - {u: 7, v: 8, bandwidth: 100}
+
+settings:
+  period_dur: 500
+  pkg_size: 1000
+  pkg_distr:
+    - {num: 100,  delay: 12}
+    - {num: 2500, delay: 12, srcs: [0, 1, 2, 6], dsts: [3, 4, 5, 7]}
+  router_env:
+    pkg_proc_delay: 5
+  router:
+    dqn:
+      optimizer:
+        name: 'rmsprop'
+        lr: 0.001
+      batch_size: 1
+      mem_capacity: 1
+      layers: [64, 64]
+      activation: 'relu'
+      embeddings:
+        name: 'oh'
+      addit_inputs:
+        - name: 'amatrix'
+    dqn-le:
+      optimizer:
+        name: 'rmsprop'
+        lr: 0.001
+      batch_size: 1
+      mem_capacity: 1
+      layers: [64, 64]
+      activation: 'relu'
+      embeddings:
+        name: 'le'
+        dim: 4
+      addit_inputs:
+        []

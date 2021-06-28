@@ -1,14 +1,17 @@
 from .base import *
 from .qrouter import *
 from .linkstate import *
+from .dqn import *
 
 
 class UnsupportedRouterType(Exception):
     pass
 
 __network_router_classes = {
-    'simple_q': QRouter,
+    'q': QRouter,
     'link_state': LinkStateRouter,
+    'dqn': DQNRouter,
+    'dqn-le': DQNRouter
 }
 
 def get_router_class(router_type: str):

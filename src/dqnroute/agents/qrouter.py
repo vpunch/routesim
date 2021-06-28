@@ -4,10 +4,10 @@ from ..messages import *
 
 class QRouter(MsgHandler, RewardAgent):
     def __init__(self,
-                 learning_rate: float,
+                 lr: float,
                  **kwargs):
         super().__init__(**kwargs)
-        self.learning_rate = learning_rate
+        self.lr = lr
         self.policy = 'strict'
         self.init_estim = 10
 
@@ -61,7 +61,7 @@ class QRouter(MsgHandler, RewardAgent):
 
             estim_new, d = self.receive_reward(msg)
             estim_delta = estim_new - self.Q[d][y]
-            self.Q[d][y] += estim_delta * self.learning_rate
+            self.Q[d][y] += estim_delta * self.lr
 
             return []
         else:

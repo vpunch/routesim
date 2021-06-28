@@ -117,6 +117,11 @@ class RewardAgent:
 
     def __compute_reward(self, msg: RewardMsg, time_sent):
         time_received = msg.reward_data
+        #print('compute reward')
+        #print(time_received)
+        #print(time_sent)
+        #print(time_received - time_sent)
+        #print(msg.estim)
         return msg.estim + (time_received - time_sent)
 
     def __create_reward(self,

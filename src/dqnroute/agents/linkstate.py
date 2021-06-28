@@ -13,6 +13,10 @@ class LinkStateRouter(MsgHandler):
         self.seq_num = 0
         self.announs = {}
 
+    @property
+    def all_nodes(self):
+        return list(self.router_graph.nodes)
+
     def init(self,
              config: dict) -> list[Message]:
         msgs = super().init(config)
@@ -56,12 +60,21 @@ class LinkStateRouter(MsgHandler):
         path = nx.dijkstra_path(self.router_graph, self.id, pkg.dst)
         return path[1], []
 
+
+    #def networkComplete(self):
+    #    return False
+
+    #def networkInit(self):
+    #    raise NotImplementedError()
+
     def __announce_state(self) -> list[Message]:
         self.seq_num += 1
         state = self.router_graph.adj[self.id]
         announ = StateAnnounMsg(self.id, self.seq_num, state)
         resp = [OutMsg(from_node=self.id, to_node=v, inner_msg=announ)
                 for v in self.out_nbrs]
+
+        self.network_changed()
 
         return resp
 
@@ -71,11 +84,20 @@ class LinkStateRouter(MsgHandler):
             self.announs[msg.node] = msg
             self.__proc_new_announ(msg.node, msg.state)
 
+            #if self.networkComplete():
+            #    self.networkInit()
+            #self.network_changed()
+
             return True
 
         return False
 
+    def network_changed(self):
+        #print('EMPTY')
+        pass
+
     def __proc_new_announ(self, node: int, state) -> bool:
+        #print('new_super')
         # Удалить всех соседей узла
 
         # Добавить соседей из состояния
@@ -84,3 +106,5 @@ class LinkStateRouter(MsgHandler):
 
         for nbr, edge_data in state.items():
             self.router_graph.add_edge(node, nbr, **edge_data)
+
+        self.network_changed()
