@@ -1,11 +1,9 @@
-result
-tf_models
-torch_models
-pythonenv
+python_env
 __pycache__
-logs*
+logs
 .ipynb_checkpoints
-*.h5
 *.egg-info
 **/texout/*
 !**/texout/*.pdf
+torch_models/*
+!torch_models/*.gz

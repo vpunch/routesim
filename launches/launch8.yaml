@@ -35,7 +35,7 @@ settings:
   router:
     q:
       lr: 0.5
-    dqn:
+    dqn_base: &dqn_base
       optimizer:
         name: 'rmsprop'
         lr: 0.001
@@ -43,18 +43,14 @@ settings:
       mem_capacity: 1
       layers: [64, 64]
       activation: 'relu'
+    dqn:
+      <<: *dqn_base
       embeddings:
         name: 'oh'
       addit_inputs:
         - name: 'amatrix'
-    dqn-le:
-      optimizer:
-        name: 'rmsprop'
-        lr: 0.001
-      batch_size: 1
-      mem_capacity: 1
-      layers: [64, 64]
-      activation: 'relu'
+    dqn_le:
+      <<: *dqn_base
       embeddings:
         name: 'le'
         dim: 4

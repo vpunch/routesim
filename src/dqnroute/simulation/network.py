@@ -80,7 +80,7 @@ class NetworkEnv:
         if self.router_type == 'dqn':
             router_cfg['net_size'] = self.graph.number_of_nodes()
 
-        if self.router_type == 'dqn-le':
+        if self.router_type == 'dqn_le':
             router_cfg['net_size'] = self.graph.number_of_nodes()
 
         return router_cfg
